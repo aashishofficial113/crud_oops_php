@@ -19,12 +19,10 @@ class user
         }
 
         $stmt->bind_param("ssiss", $name, $email, $age, $pass, $role);
-        if ($stmt->execute()) {
-            header("location:register.php?msg=datasaved");
-        } else {
-            header("location:register.php?msg=errorinsavingdata");
-        }
+       $result=$stmt->execute();              
         $stmt->close();
+        return (bool)$result;
+
     }
 
     function login($email, $password)
@@ -47,16 +45,23 @@ class user
                 $_SESSION['role'] = $user['role'];
                 return true;
             }
+            return false;
         }
     }
 
         function edit($id)
         {
+            echo "ID you are searching: " . $id . "<br>";
             $sql = "select * from $this->table where id=?";
             $stmt = $this->conn->prepare($sql);
             $stmt->bind_param("i", $id);
             $stmt->execute();
+
             $data = $stmt->get_result();
+            if ($data && $data->num_rows === 0) {
+    exit("✅ No record found in database for this ID");
+}
+
             $stmt->close();
             return $data;
         }

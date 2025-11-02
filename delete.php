@@ -10,6 +10,7 @@ $db=new Database();
 $conn=$db->getconnect();
 
 $user=new user($conn);
+
 if($user->delete($id)){
     header("location:showallrecords.php?msg=record deleted");
 }
