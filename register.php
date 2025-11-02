@@ -38,17 +38,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 ?>
 
+<?php
+// Make sure session exists if you want the admin HOME button to show
+if (session_status() === PHP_SESSION_NONE) session_start();
+$currentRole = $_SESSION['role'] ?? null; // 'admin' or null
+?>
 
+<?php
+if (session_status() === PHP_SESSION_NONE) session_start();
+$currentRole = $_SESSION['role'] ?? null;
+?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
 
-    <!-- ✅ Bootstrap CDN -->
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         body {
             background-color: #f8f9fa;
@@ -56,69 +65,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            padding: 20px;
         }
-
         .card {
             max-width: 450px;
             width: 100%;
         }
     </style>
 </head>
-
 <body>
-    <nav>
-     <?php if ($currentrole === 'admin'): ?>
-            <a href="admindashboard.php" class="btn btn-success btn-sm me-2">HOME</a>
-        <?php endif; ?>
 
-    </nav>
+    <!-- Simple Navbar (only if admin is logged in) -->
+    <?php if ($currentRole === 'admin'): ?>
+        <nav class="navbar navbar-dark bg-dark w-100 position-absolute top-0">
+            <div class="container-fluid">
+                <span class="navbar-text text-light">Admin Panel</span>
+                <a href="admindashboard.php" class="btn btn-success btn-sm">Home</a>
+            </div>
+        </nav>
+    <?php endif; ?>
 
-    <div class="card shadow-sm border-0">
+    <div class="card shadow-sm">
         <div class="card-body p-4">
-            <h3 class="text-center mb-4">Create Account</h3>
+            <h3 class="text-center mb-4">Register</h3>
 
-            <form method="POST" action="">
+            <form action="" method="POST">
                 <div class="mb-3">
                     <label class="form-label">Full Name</label>
-                    <input type="text" name="name" class="form-control" placeholder="Enter full name" required>
+                    <input type="text" name="name" class="form-control" required>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Email Address</label>
-                    <input type="email" name="email" class="form-control" placeholder="Enter email" required>
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Age</label>
-                    <input type="number" name="age" class="form-control" placeholder="Enter age" required min="1">
+                    <input type="number" name="age" class="form-control" min="1" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Password</label>
-                    <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+                    <input type="password" name="password" class="form-control" required>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Role</label>
-                    <select name="role" class="form-select" required>
-                        <option value="user" selected>User</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                </div>
-
+                <!-- Show Role selection only if admin is creating a user -->
+                <?php if ($currentRole === 'admin'): ?>
+                    <div class="mb-3">
+                        <label class="form-label">Role</label>
+                        <select name="role" class="form-select">
+                            <option value="user" selected>User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                <?php else: ?>
+                    <input type="hidden" name="role" value="user">
+                <?php endif; ?>
+                
                 <button type="submit" class="btn btn-primary w-100">Register</button>
             </form>
+             <?php if ($currentRole== 'user'??null): ?>
 
-            <p class="text-center mt-4">
-                Already have an account?
-                <a href="index.php" class="text-decoration-none">Login here</a>
+            <p class="text-center mt-3">
+                Already have an account? <a href="index.php">Login</a>
             </p>
-        </div>
+            <?php endif; ?>
+        </div> 
     </div>
 
-    <!-- ✅ Bootstrap JS -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
-
 </html>
